@@ -1,0 +1,690 @@
+:root {
+    --primary-color: #6366f1;
+    --primary-hover: #4f46e5;
+    --background-color: #0f172a;
+    --surface-color: #1e293b;
+    --text-color: #f8fafc;
+    --text-secondary: #94a3b8;
+    --danger-color: #ef4444;
+    --success-color: #22c55e;
+    --warning-color: #eab308;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Liquid Layout Updates */
+body {
+    font-family: 'Outfit', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    /* Prevent scrolling on Full HD */
+}
+
+.game-container {
+    background-color: var(--surface-color);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+
+    /* Liquid Dimensions */
+    width: 95vw;
+    height: 90vh;
+    max-width: none;
+    /* Remove constraint */
+
+    display: flex;
+    flex-direction: row;
+    /* Side-by-side layout */
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 2rem;
+    position: relative;
+}
+
+header {
+    position: absolute;
+    top: 1rem;
+    left: 2rem;
+    text-align: left;
+    width: auto;
+    z-index: 2;
+}
+
+header h1 {
+    font-weight: 800;
+    color: var(--primary-color);
+    font-size: 2rem;
+    letter-spacing: -1px;
+    margin: 0;
+}
+
+header p {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 1rem;
+}
+
+/* Main Game Area (Left/Center) */
+.game-area {
+    flex: 3;
+    display: flex;
+    flex-direction: row;
+    /* Horizontal layout: Hangman | Center Content */
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    padding-top: 3rem;
+    /* Make room for header */
+}
+
+/* Hangman Drawing - Scaling */
+.hangman-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    max-width: 30%;
+    /* Take up left portion */
+    margin-bottom: 0;
+}
+
+svg {
+    stroke: var(--text-color);
+    stroke-width: 4;
+    stroke-linecap: round;
+    fill: none;
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 0 5px rgba(99, 102, 241, 0.3));
+}
+
+.center-content {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0 2rem;
+    height: 100%;
+}
+
+
+.base {
+    stroke: var(--text-secondary);
+    stroke-width: 3;
+}
+
+.body-part {
+    display: none;
+    /* Hidden by default */
+    stroke: var(--danger-color);
+    animation: draw 0.5s ease forwards;
+}
+
+@keyframes draw {
+    from {
+        opacity: 0;
+        stroke-dasharray: 100;
+        stroke-dashoffset: 100;
+    }
+
+    to {
+        opacity: 1;
+        stroke-dashoffset: 0;
+    }
+}
+
+/* Word Display */
+.word-display {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 2rem 0;
+    flex-wrap: wrap;
+}
+
+.letter-box {
+    border-bottom: 4px solid var(--text-secondary);
+    width: 60px;
+    /* Larger for Full HD */
+    height: 70px;
+    font-size: 3rem;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+    transition: all 0.3s;
+}
+
+.letter-box.guessed {
+    border-bottom-color: var(--primary-color);
+    color: var(--primary-color);
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Controls & Hints area */
+.hint-area {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+#hint-text {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    min-height: 1.5rem;
+}
+
+.blur {
+    filter: blur(5px);
+    user-select: none;
+    background: #334155;
+    padding: 0 5px;
+    border-radius: 4px;
+}
+
+.secondary-btn {
+    background: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.secondary-btn:hover:not(:disabled) {
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.secondary-btn:disabled {
+    border-color: var(--text-secondary);
+    color: var(--text-secondary);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Keyboard */
+.keyboard {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    /* 10 keys per row usually roughly fits */
+    gap: 0.8rem;
+    width: 100%;
+    max-width: 800px;
+    /* Limit keyboard width so it doesn't stretch too crazy */
+    margin-bottom: 1rem;
+}
+
+.key {
+    background: var(--surface-color);
+    border: 1px solid var(--text-secondary);
+    color: var(--text-color);
+    padding: 1rem 0;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    font-size: 1.2rem;
+}
+
+.key:hover:not(:disabled) {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.key.correct {
+    background: var(--success-color);
+    border-color: var(--success-color);
+    color: #fff;
+}
+
+.key.wrong {
+    background: var(--text-secondary);
+    border-color: var(--text-secondary);
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Right Sidebar (Scoreboard + Actions) */
+.controls {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+}
+
+/* Scoreboard Panel */
+.scoreboard {
+    flex: 1;
+    min-width: 300px;
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    overflow-y: auto;
+}
+
+.scoreboard h3 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+}
+
+.player-card {
+    background: var(--surface-color);
+    border: 1px solid var(--text-secondary);
+    padding: 1.2rem;
+    margin-bottom: 0.8rem;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s;
+    font-size: 1.1rem;
+}
+
+.player-card.active {
+    border-color: var(--primary-color);
+    background: rgba(99, 102, 241, 0.1);
+    transform: scale(1.02);
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+}
+
+.player-name {
+    font-weight: 600;
+}
+
+.player-score {
+    font-weight: 800;
+    font-size: 1.1rem;
+}
+
+/* Buttons */
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.primary-btn,
+.secondary-btn {
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+}
+
+.primary-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Modal */
+.modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20px;
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.3s;
+    z-index: 100;
+}
+
+.modal-content {
+    background: var(--surface-color);
+    padding: 3rem;
+    border-radius: 16px;
+    text-align: center;
+    border: 1px solid var(--text-secondary);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    max-width: 600px;
+    width: 90%;
+}
+
+.modal h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.modal p {
+    margin-bottom: 2rem;
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+}
+
+#revealed-word {
+    color: var(--primary-color);
+    font-weight: 800;
+}
+
+/* Setup Modal Specifics */
+.setup-content {
+    width: 400px;
+}
+
+.setup-content select,
+.setup-content input {
+    width: 100%;
+    padding: 1rem;
+    margin: 0.5rem 0 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--text-secondary);
+    background: var(--background-color);
+    color: var(--text-color);
+    font-family: inherit;
+    outline: none;
+    font-size: 1.1rem;
+}
+
+.setup-content input:focus {
+    border-color: var(--primary-color);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+
+    /* Tablet / Smaller Desktop */
+    .game-container {
+        /* Keep constrained width but allow stacking */
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    header {
+        position: static;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+
+    .game-area {
+        flex-direction: column;
+        /* Stack Hangman and Content */
+        padding-top: 0;
+    }
+
+    .hangman-container {
+        max-width: 100%;
+        max-height: 25vh;
+        /* Limit height */
+        margin-bottom: 1rem;
+    }
+
+    .center-content {
+        padding: 0;
+        width: 100%;
+    }
+
+    .scoreboard {
+        display: none;
+        /* Hide sidebar scoreboard on tablets? Or move to bottom? */
+        /* Let's keep it visible but maybe absolute or drawer? 
+           For verified request "fit all components", let's stack it at bottom 
+           but make it compact.
+        */
+        display: flex;
+        min-width: 0;
+        width: 100%;
+        height: 15vh;
+        /* Fixed small height */
+        flex-direction: row;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 0.5rem;
+        border-left: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .player-card {
+        min-width: 150px;
+        margin-right: 1rem;
+        margin-bottom: 0;
+        padding: 0.5rem;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+    }
+}
+
+@media (max-width: 768px) {
+
+    /* Mobile Styles */
+    body {
+        align-items: flex-start;
+        /* Allow scrolling if needed */
+        height: auto;
+        overflow-y: auto;
+        /* Enable vertical scroll */
+    }
+
+    .game-container {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+        width: 100%;
+        padding: 1rem 0.5rem;
+        gap: 0.5rem;
+    }
+
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    header p {
+        font-size: 0.9rem;
+    }
+
+    /* Stack Everything Vertically */
+    .game-area {
+        flex: auto;
+        /* Take natural height */
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+
+    /* 1. Hangman on Top */
+    .hangman-container {
+        flex: 0 0 auto;
+        height: 20vh;
+        /* 20% of screen height */
+        width: 100%;
+        max-width: none;
+        margin: 0 0 1rem 0;
+    }
+
+    svg {
+        max-height: 100%;
+        width: auto;
+        /* Preserve aspect ratio */
+    }
+
+    /* 2. Word & Controls */
+    .center-content {
+        flex: 0 0 auto;
+        width: 100%;
+        padding: 0;
+    }
+
+    .word-display {
+        margin: 1rem 0;
+        gap: 0.2rem;
+    }
+
+    .letter-box {
+        width: 10vw;
+        height: 12vw;
+        max-width: 40px;
+        max-height: 50px;
+        font-size: 1.5rem;
+        border-bottom-width: 2px;
+    }
+
+    .hint-area {
+        font-size: 0.9rem;
+    }
+
+    #hint-text {
+        font-size: 1rem;
+    }
+
+    .keyboard {
+        gap: 0.3rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .key {
+        padding: 0.4rem 0;
+        font-size: 1rem;
+        border-radius: 4px;
+    }
+
+    .action-buttons {
+        flex-direction: row;
+        gap: 0.5rem;
+    }
+
+    .primary-btn,
+    .secondary-btn {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+    }
+
+    /* 3. Scoreboard at Bottom */
+    .scoreboard {
+        flex: 0 0 auto;
+        width: 100%;
+        min-width: 0;
+        height: auto;
+        max-height: none;
+        padding: 1rem;
+        margin-top: 1rem;
+        background: rgba(0, 0, 0, 0.2);
+
+        display: flex;
+        flex-direction: row;
+        /* Horizontal scroll for players */
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+
+        /* Reset tablet specific */
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .player-card {
+        flex: 0 0 auto;
+        /* Don't shrink */
+        width: 140px;
+        margin-right: 0.5rem;
+        margin-bottom: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0.8rem;
+    }
+
+    .player-name {
+        font-size: 0.9rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 100%;
+    }
+
+    .player-score {
+        font-size: 1rem;
+    }
+
+    .modal-content {
+        padding: 1.5rem;
+        width: 95%;
+    }
+
+    .setup-content {
+        width: 95%;
+    }
+}
+
+/* Confetti Animation */
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    top: -10px;
+    border-radius: 2px;
+    z-index: 200;
+    pointer-events: none;
+    animation: fall linear forwards;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(100vh) rotate(720deg);
+    }
+}
